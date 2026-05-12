@@ -48,7 +48,7 @@ function TopBar() {
           <Link
             href="/search"
             aria-label="Search"
-            className="inline-flex size-10 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+            className="hidden size-10 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground md:inline-flex"
           >
             <Search className="size-4" />
           </Link>

@@ -53,7 +53,7 @@ export default async function HomePage() {
           </header>
         </Reveal>
 
-        <Stagger className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <Stagger className="grid grid-cols-2 gap-5 sm:gap-8 lg:grid-cols-3">
           {destinations.map((d) => (
             <DestinationCard key={d.id} destination={d} />
           ))}

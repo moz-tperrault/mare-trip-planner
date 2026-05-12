@@ -31,11 +31,14 @@ export default function ProfilePage() {
           { label: "Journeys taken", value: "08" },
           { label: "On your atlas", value: "47" },
         ].map((stat) => (
-          <div key={stat.label} className="flex flex-col items-center gap-3">
+          <div
+            key={stat.label}
+            className="flex flex-col items-center gap-3 px-3 text-center"
+          >
             <span className="text-4xl font-light tracking-tight text-action md:text-5xl">
               {stat.value}
             </span>
-            <span className="text-xs uppercase tracking-[0.28em] text-muted-foreground">
+            <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground sm:text-xs sm:tracking-[0.28em]">
               {stat.label}
             </span>
           </div>
