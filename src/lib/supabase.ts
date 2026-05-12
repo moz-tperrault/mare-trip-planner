@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
-import type { Destination, Trip } from "@/types";
+import type { Destination, ScheduleItem, Trip } from "@/types";
 
 type DestinationRow = {
   id: string;
@@ -128,6 +128,81 @@ export type NewTripInput = {
   endDate: string;
   notes?: string | null;
 };
+
+type ScheduleItemRow = {
+  id: string;
+  trip_id: string;
+  date: string;
+  start_time: string | null;
+  end_time: string | null;
+  title: string;
+  location: string | null;
+  notes: string | null;
+};
+
+function toScheduleItem(row: ScheduleItemRow): ScheduleItem {
+  return {
+    id: row.id,
+    tripId: row.trip_id,
+    date: row.date,
+    startTime: row.start_time ?? undefined,
+    endTime: row.end_time ?? undefined,
+    title: row.title,
+    location: row.location ?? undefined,
+    notes: row.notes ?? undefined,
+  };
+}
+
+export async function fetchScheduleItems(tripId: string): Promise<ScheduleItem[]> {
+  const supabase = await getClient();
+  const { data, error } = await supabase
+    .from("schedule_items")
+    .select("*")
+    .eq("trip_id", tripId)
+    .order("date", { ascending: true })
+    .order("start_time", { ascending: true, nullsFirst: true });
+
+  if (error) {
+    console.error("[supabase] fetchScheduleItems failed", error);
+    return [];
+  }
+  return (data ?? []).map(toScheduleItem);
+}
+
+export type NewScheduleItemInput = {
+  tripId: string;
+  date: string;
+  startTime?: string | null;
+  endTime?: string | null;
+  title: string;
+  location?: string | null;
+  notes?: string | null;
+};
+
+export async function saveScheduleItem(
+  input: NewScheduleItemInput,
+): Promise<{ id: string } | { error: string }> {
+  const supabase = await getClient();
+  const { data, error } = await supabase
+    .from("schedule_items")
+    .insert({
+      trip_id: input.tripId,
+      date: input.date,
+      start_time: input.startTime || null,
+      end_time: input.endTime || null,
+      title: input.title,
+      location: input.location || null,
+      notes: input.notes || null,
+    })
+    .select("id")
+    .single();
+
+  if (error || !data) {
+    console.error("[supabase] saveScheduleItem failed", error);
+    return { error: error?.message ?? "Insert failed" };
+  }
+  return { id: data.id };
+}
 
 export async function saveTrip(
   input: NewTripInput,

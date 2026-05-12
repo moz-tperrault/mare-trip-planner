@@ -58,6 +58,38 @@ create policy "public can insert trips"
   with check (true);
 
 -- ---------------------------------------------------------
+-- Schedule items (the itinerary of a trip)
+-- ---------------------------------------------------------
+create table if not exists public.schedule_items (
+  id          uuid primary key default uuid_generate_v4(),
+  trip_id     uuid not null references public.trips(id) on delete cascade,
+  date        date not null,
+  start_time  time,
+  end_time    time,
+  title       text not null,
+  location    text,
+  notes       text,
+  created_at  timestamptz not null default now()
+);
+
+create index if not exists schedule_items_trip_date_idx
+  on public.schedule_items (trip_id, date, start_time);
+
+alter table public.schedule_items enable row level security;
+
+drop policy if exists "public can read schedule_items" on public.schedule_items;
+create policy "public can read schedule_items"
+  on public.schedule_items
+  for select
+  using (true);
+
+drop policy if exists "public can insert schedule_items" on public.schedule_items;
+create policy "public can insert schedule_items"
+  on public.schedule_items
+  for insert
+  with check (true);
+
+-- ---------------------------------------------------------
 -- Row Level Security
 -- The anon (public) key needs a SELECT policy to read rows.
 -- ---------------------------------------------------------
