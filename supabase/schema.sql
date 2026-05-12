@@ -146,7 +146,7 @@ values
     'Vestland, Norway',
     'Hardangerfjord',
     'A glass-fronted cabin on the fjord with a wood-fired sauna, ice plunge, and a private dock. Northern light. Long silences. Suited to two.',
-    'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=75',
+    'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1600&q=75',
     array[
       'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1200&q=75',
       'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=75'
