@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ConciergeLetter } from "@/components/concierge-letter";
 import { DestinationCard } from "@/components/destination-card";
 import { Reveal } from "@/components/motion/reveal";
 import { Stagger } from "@/components/motion/stagger";
@@ -29,6 +30,8 @@ export default async function HomePage() {
           </p>
         </Reveal>
       </section>
+
+      <ConciergeLetter />
 
       <section className="flex flex-col gap-8">
         <Reveal>
