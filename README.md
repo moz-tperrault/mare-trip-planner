@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Maré
 
-## Getting Started
+**Live:** https://mare-trip-planner.vercel.app
 
-First, run the development server:
+A luxury wellness travel concierge — wellness retreats, spa resorts, and slow-travel sanctuaries. UI was translated from a Figma file (Travenor) then rebranded around emotional escape, quiet luxury, and sensory immersion (inspirations: Explora Journeys, Kempinski, Castelfalfi, Miraval, Mirbeau).
+
+## Stack
+
+- **Next.js 16** (App Router, async params) · **React 19** · **TypeScript** (strict)
+- **Tailwind CSS v4** with a luxury wellness palette (ivory / deep ocean / sunset gold / seafoam / sand / sage)
+- **Typography:** Cormorant Garamond (display) + Geist (body)
+- **shadcn/ui** primitives (Base UI under the hood)
+- **Leaflet + react-leaflet** for the destination map (SSR-safe via `next/dynamic`)
+- **Supabase** (Postgres + RLS) backing the `destinations` table
+- Deployed on **Vercel**
+
+## Local development
 
 ```bash
+npm install
+cp .env.local.example .env.local   # then fill in the two values
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Database
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+To rebuild the destinations table from scratch in any Supabase project, paste `supabase/schema.sql` into Supabase SQL Editor and run it. The script is idempotent (`on conflict (slug) do update`).
 
-## Learn More
+## Routes
 
-To learn more about Next.js, take a look at the following resources:
+- `/` — Atlas (home, hero + editor's picks from Supabase)
+- `/destinations` — the collection
+- `/destinations/[slug]` — detail (Supabase row, Leaflet map)
+- `/destinations/[slug]/gallery` — the view / photo gallery
+- `/destinations/all` — curated retreats (date-bounded packages)
+- `/trips` · `/trips/[id]/schedule` · `/trips/[id]/messages`
+- `/messages` · `/messages/[id]` — concierge inbox
+- `/profile` · `/profile/edit`
+- `/notifications` · `/search`
+- `/splash` · `/onboarding` · `/auth/{sign-in,sign-up,forgot-password,verify}` (UI only)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See `CLAUDE.md` for editorial voice rules, brand tokens, and contribution conventions.
