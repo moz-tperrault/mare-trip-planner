@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Calendar, Plus } from "lucide-react";
 import { DestinationCardCompact } from "@/components/destination-card-compact";
+import { timeUntil } from "@/lib/dates";
 import { fetchDestinations, fetchTrips } from "@/lib/supabase";
 
 const fmt = new Intl.DateTimeFormat("en-US", {
@@ -8,6 +9,9 @@ const fmt = new Intl.DateTimeFormat("en-US", {
   day: "numeric",
   year: "numeric",
 });
+
+const EMPTY_IMAGE =
+  "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1800&q=80";
 
 export default async function JourneysPage() {
   const [trips, destinations] = await Promise.all([
@@ -27,29 +31,27 @@ export default async function JourneysPage() {
           <br />
           <em className="not-italic text-action">in confidence.</em>
         </h1>
-        <div className="pt-2">
-          <Link
-            href="/trips/new"
-            className="inline-flex h-12 items-center gap-3 rounded-full bg-primary px-6 text-sm font-medium tracking-wide text-primary-foreground transition hover:bg-primary/90"
-          >
-            <Plus className="size-4" strokeWidth={1.5} />
-            Plan a journey
-          </Link>
-        </div>
+        {trips.length > 0 && (
+          <div className="pt-2">
+            <Link
+              href="/trips/new"
+              className="inline-flex h-12 items-center gap-3 rounded-full bg-primary px-6 text-sm font-medium tracking-wide text-primary-foreground transition hover:bg-primary/90"
+            >
+              <Plus className="size-4" strokeWidth={1.5} />
+              Plan a journey
+            </Link>
+          </div>
+        )}
       </header>
 
       <section className="flex flex-col gap-8">
-        <h2 className="text-2xl font-light tracking-tight md:text-3xl">Upcoming</h2>
+        <h2 className="text-2xl font-light tracking-tight md:text-3xl">
+          Upcoming
+        </h2>
         {trips.length === 0 ? (
-          <p className="max-w-prose text-base leading-relaxed text-muted-foreground">
-            No journeys yet. Use{" "}
-            <Link href="/trips/new" className="text-action hover:underline">
-              Plan a journey
-            </Link>{" "}
-            above to hold your first stay.
-          </p>
+          <EmptyState />
         ) : (
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
             {trips.map((trip) => {
               const dest = destinationBySlug.get(trip.destinationId);
               if (!dest) return null;
@@ -79,6 +81,9 @@ export default async function JourneysPage() {
                       {fmt.format(new Date(trip.startDate))} →{" "}
                       {fmt.format(new Date(trip.endDate))}
                     </span>
+                    <p className="text-sm italic tracking-wide text-action">
+                      {timeUntil(trip.startDate)}.
+                    </p>
                     {trip.notes && (
                       <p className="max-w-prose pt-1 text-sm italic leading-relaxed text-muted-foreground">
                         “{trip.notes}”
@@ -93,7 +98,9 @@ export default async function JourneysPage() {
       </section>
 
       <section className="flex flex-col gap-8">
-        <h2 className="text-2xl font-light tracking-tight md:text-3xl">Saved escapes</h2>
+        <h2 className="text-2xl font-light tracking-tight md:text-3xl">
+          Saved escapes
+        </h2>
         <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 lg:grid-cols-4">
           {destinations.slice(0, 6).map((d) => (
             <DestinationCardCompact
@@ -105,6 +112,49 @@ export default async function JourneysPage() {
           ))}
         </div>
       </section>
+    </div>
+  );
+}
+
+function EmptyState() {
+  return (
+    <div className="relative overflow-hidden rounded-[28px]">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={EMPTY_IMAGE}
+        alt=""
+        aria-hidden
+        className="aspect-[16/9] w-full object-cover md:aspect-[21/9]"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-foreground/55 via-foreground/15 to-foreground/0" />
+      <div className="absolute inset-x-6 bottom-8 flex flex-col gap-5 text-background md:inset-x-12 md:bottom-14">
+        <p className="text-xs tracking-[0.32em] text-background/80">
+          Your first journey
+        </p>
+        <h3 className="max-w-2xl text-4xl font-light leading-[1.05] tracking-tight md:text-6xl">
+          Where would you like to{" "}
+          <em className="not-italic text-action">exhale</em>?
+        </h3>
+        <p className="max-w-lg text-base leading-relaxed text-background/85 md:text-lg">
+          Start with the collection, or hand a few details to your concierge and
+          we&apos;ll do the holding.
+        </p>
+        <div className="flex flex-wrap gap-3 pt-2">
+          <Link
+            href="/trips/new"
+            className="inline-flex h-12 items-center gap-3 rounded-full bg-background px-6 text-sm font-medium tracking-wide text-foreground transition hover:bg-background/90"
+          >
+            <Plus className="size-4" strokeWidth={1.5} />
+            Plan a journey
+          </Link>
+          <Link
+            href="/destinations"
+            className="inline-flex h-12 items-center rounded-full border border-background/40 px-6 text-sm tracking-wide text-background transition hover:bg-background/10"
+          >
+            Browse the collection →
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }
