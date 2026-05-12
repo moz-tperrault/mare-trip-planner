@@ -1,21 +1,13 @@
 import Link from "next/link";
-import { Bell, CalendarDays, Home, MessageCircle, Search, User } from "lucide-react";
+import { Bell, CalendarDays, MessageCircle, Search } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-// Mobile bottom nav still needs Home + Profile since the logo wordmark
-// and avatar are smaller targets on small screens.
-const MOBILE_NAV = [
-  { href: "/", label: "Atlas", icon: Home },
+// The logo (top-left) links home and the avatar (top-right) links to
+// the profile on every screen size, so the only nav items are the
+// secondary destinations: Journeys + Concierge.
+const NAV = [
   { href: "/trips", label: "Journeys", icon: CalendarDays },
   { href: "/messages", label: "Concierge", icon: MessageCircle },
-  { href: "/profile", label: "You", icon: User },
-];
-
-// Desktop top nav skips Home (the Maré logo links there) and Profile
-// (the avatar in the top-right corner links there).
-const DESKTOP_NAV = [
-  { href: "/trips", label: "Journeys" },
-  { href: "/messages", label: "Concierge" },
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -41,7 +33,7 @@ function TopBar() {
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex" aria-label="Main">
-          {DESKTOP_NAV.map(({ href, label }) => (
+          {NAV.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
@@ -85,7 +77,7 @@ function BottomNav() {
       aria-label="Mobile"
       className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-around border-t border-border/40 bg-background/95 px-2 py-2 backdrop-blur md:hidden"
     >
-      {MOBILE_NAV.map(({ href, label, icon: Icon }) => (
+      {NAV.map(({ href, label, icon: Icon }) => (
         <Link
           key={href}
           href={href}
