@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
-import type { Destination } from "@/types";
+import type { Destination, Trip } from "@/types";
 
 type DestinationRow = {
   id: string;
@@ -70,4 +70,96 @@ export async function fetchDestinationBySlug(
     return null;
   }
   return data ? toDestination(data) : null;
+}
+
+type TripRow = {
+  id: string;
+  destination_id: string | null;
+  destination_slug: string;
+  start_date: string;
+  end_date: string;
+  notes: string | null;
+  created_at: string;
+};
+
+function toTrip(row: TripRow): Trip {
+  return {
+    id: row.id,
+    destinationId: row.destination_slug,
+    startDate: row.start_date,
+    endDate: row.end_date,
+    notes: row.notes ?? "",
+    itinerary: [],
+  };
+}
+
+export async function fetchTrips(): Promise<Trip[]> {
+  const supabase = await getClient();
+  const { data, error } = await supabase
+    .from("trips")
+    .select("*")
+    .order("start_date", { ascending: true });
+
+  if (error) {
+    console.error("[supabase] fetchTrips failed", error);
+    return [];
+  }
+  return (data ?? []).map(toTrip);
+}
+
+export async function fetchTripById(id: string): Promise<Trip | null> {
+  const supabase = await getClient();
+  const { data, error } = await supabase
+    .from("trips")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) {
+    console.error("[supabase] fetchTripById failed", error);
+    return null;
+  }
+  return data ? toTrip(data) : null;
+}
+
+export type NewTripInput = {
+  destinationSlug: string;
+  startDate: string;
+  endDate: string;
+  notes?: string | null;
+};
+
+export async function saveTrip(
+  input: NewTripInput,
+): Promise<{ id: string } | { error: string }> {
+  const supabase = await getClient();
+
+  // Resolve the destination row so we can store both the slug and FK.
+  const { data: destination, error: destError } = await supabase
+    .from("destinations")
+    .select("id, slug")
+    .eq("slug", input.destinationSlug)
+    .maybeSingle();
+
+  if (destError || !destination) {
+    return { error: "Destination not found" };
+  }
+
+  const { data, error } = await supabase
+    .from("trips")
+    .insert({
+      destination_id: destination.id,
+      destination_slug: destination.slug,
+      start_date: input.startDate,
+      end_date: input.endDate,
+      notes: input.notes ?? null,
+    })
+    .select("id")
+    .single();
+
+  if (error || !data) {
+    console.error("[supabase] saveTrip failed", error);
+    return { error: error?.message ?? "Insert failed" };
+  }
+  return { id: data.id };
 }

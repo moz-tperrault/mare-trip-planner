@@ -26,6 +26,38 @@ create table if not exists public.destinations (
 create index if not exists destinations_slug_idx on public.destinations (slug);
 
 -- ---------------------------------------------------------
+-- Trips table (a saved journey)
+-- ---------------------------------------------------------
+create table if not exists public.trips (
+  id                uuid primary key default uuid_generate_v4(),
+  destination_id    uuid references public.destinations(id) on delete set null,
+  destination_slug  text not null,
+  start_date        date not null,
+  end_date          date not null,
+  notes             text,
+  created_at        timestamptz not null default now()
+);
+
+create index if not exists trips_destination_slug_idx on public.trips (destination_slug);
+create index if not exists trips_start_date_idx on public.trips (start_date);
+
+alter table public.trips enable row level security;
+
+drop policy if exists "public can read trips" on public.trips;
+create policy "public can read trips"
+  on public.trips
+  for select
+  using (true);
+
+-- No auth yet, so allow public inserts. Replace with `auth.uid()`-scoped
+-- policies once user accounts are wired up.
+drop policy if exists "public can insert trips" on public.trips;
+create policy "public can insert trips"
+  on public.trips
+  for insert
+  with check (true);
+
+-- ---------------------------------------------------------
 -- Row Level Security
 -- The anon (public) key needs a SELECT policy to read rows.
 -- ---------------------------------------------------------
