@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Bookmark, ChevronLeft, MapPin, Star } from "lucide-react";
 import { DestinationMapLoader } from "@/components/destination-map-loader";
+import { ParallaxImage } from "@/components/motion/parallax-image";
+import { Reveal } from "@/components/motion/reveal";
 import { fetchDestinationBySlug } from "@/lib/supabase";
 
 export default async function DestinationDetailPage({
@@ -18,11 +20,10 @@ export default async function DestinationDetailPage({
   return (
     <article className="-mt-8 flex flex-col gap-12 md:gap-16">
       <div className="relative overflow-hidden rounded-[28px]">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <ParallaxImage
           src={destination.imageUrl}
           alt={destination.name}
-          className="aspect-[4/5] w-full object-cover sm:aspect-[3/2] md:aspect-[2/1]"
+          className="aspect-[4/5] w-full overflow-hidden sm:aspect-[3/2] md:aspect-[2/1]"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-foreground/15 via-transparent to-foreground/40" />
         <div className="absolute inset-x-6 top-6 flex items-center justify-between gap-3 md:inset-x-8">
@@ -72,21 +73,24 @@ export default async function DestinationDetailPage({
             </span>
           </div>
 
-          <section className="flex flex-col gap-5">
-            <p className="text-xs uppercase tracking-[0.32em] text-muted-foreground">
-              The stay
-            </p>
-            <p className="max-w-prose text-lg leading-relaxed text-foreground/85 md:text-xl">
-              {destination.description}
-            </p>
-            <Link
-              href={`/destinations/${destination.id}/gallery`}
-              className="text-sm tracking-wide text-action hover:underline"
-            >
-              Read the full letter →
-            </Link>
-          </section>
+          <Reveal>
+            <section className="flex flex-col gap-5">
+              <p className="text-xs uppercase tracking-[0.32em] text-muted-foreground">
+                The stay
+              </p>
+              <p className="max-w-prose text-lg leading-relaxed text-foreground/85 md:text-xl">
+                {destination.description}
+              </p>
+              <Link
+                href={`/destinations/${destination.id}/gallery`}
+                className="text-sm tracking-wide text-action hover:underline"
+              >
+                Read the full letter →
+              </Link>
+            </section>
+          </Reveal>
 
+          <Reveal>
           <section className="flex flex-col gap-4">
             <p className="text-xs uppercase tracking-[0.32em] text-muted-foreground">
               In view
@@ -109,7 +113,9 @@ export default async function DestinationDetailPage({
               ))}
             </div>
           </section>
+          </Reveal>
 
+          <Reveal>
           <section className="flex flex-col gap-4">
             <p className="text-xs uppercase tracking-[0.32em] text-muted-foreground">
               Where it is
@@ -124,6 +130,7 @@ export default async function DestinationDetailPage({
               {destination.location} · {destination.country}
             </p>
           </section>
+          </Reveal>
         </div>
 
         <aside className="flex flex-col gap-5 self-start rounded-[28px] border border-border bg-card p-7 md:sticky md:top-28">
