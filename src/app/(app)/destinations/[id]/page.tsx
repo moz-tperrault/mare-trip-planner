@@ -4,6 +4,7 @@ import { Bookmark, ChevronLeft, MapPin, Star } from "lucide-react";
 import { DestinationMapLoader } from "@/components/destination-map-loader";
 import { ParallaxImage } from "@/components/motion/parallax-image";
 import { Reveal } from "@/components/motion/reveal";
+import { letterForSlug } from "@/lib/letters";
 import { fetchDestinationBySlug } from "@/lib/supabase";
 
 export default async function DestinationDetailPage({
@@ -16,6 +17,7 @@ export default async function DestinationDetailPage({
   if (!destination) notFound();
 
   const gallery = [destination.imageUrl, ...destination.galleryUrls].slice(0, 5);
+  const letter = letterForSlug(id);
 
   return (
     <article className="-mt-8 flex flex-col gap-12 md:gap-16">
@@ -89,6 +91,22 @@ export default async function DestinationDetailPage({
               </Link>
             </section>
           </Reveal>
+
+          {letter && (
+            <Reveal>
+              <section className="flex flex-col gap-5 border-y border-border/60 py-12 md:py-16">
+                <p className="text-xs uppercase tracking-[0.32em] text-muted-foreground">
+                  A letter
+                </p>
+                <p className="max-w-prose text-xl font-light italic leading-[1.55] text-foreground/85 md:text-2xl">
+                  {letter.body}
+                </p>
+                <p className="text-sm tracking-wide text-action">
+                  — {letter.signature} · {letter.role}
+                </p>
+              </section>
+            </Reveal>
+          )}
 
           <Reveal>
           <section className="flex flex-col gap-4">
