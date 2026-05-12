@@ -2,9 +2,10 @@ import Link from "next/link";
 import { Search as SearchIcon, X } from "lucide-react";
 import { DestinationCardCompact } from "@/components/destination-card-compact";
 import { PageHeader } from "@/components/page-header";
-import { destinations } from "@/lib/data";
+import { fetchDestinations } from "@/lib/supabase";
 
-export default function SearchPage() {
+export default async function SearchPage() {
+  const destinations = await fetchDestinations();
   return (
     <div className="flex flex-col gap-6">
       <PageHeader

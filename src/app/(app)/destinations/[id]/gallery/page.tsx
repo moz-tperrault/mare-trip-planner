@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { Clock, MapPin, Star } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PageHeader } from "@/components/page-header";
-import { getDestination } from "@/lib/data";
+import { fetchDestinationBySlug } from "@/lib/supabase";
 
 export default async function DestinationGalleryPage({
   params,
@@ -10,7 +10,7 @@ export default async function DestinationGalleryPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const destination = getDestination(id);
+  const destination = await fetchDestinationBySlug(id);
   if (!destination) notFound();
 
   const photos = [destination.imageUrl, ...destination.galleryUrls];

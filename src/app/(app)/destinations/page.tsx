@@ -1,7 +1,8 @@
 import { DestinationCardCompact } from "@/components/destination-card-compact";
-import { destinations } from "@/lib/data";
+import { fetchDestinations } from "@/lib/supabase";
 
-export default function CollectionPage() {
+export default async function CollectionPage() {
+  const destinations = await fetchDestinations();
   return (
     <div className="flex flex-col gap-16 md:gap-20">
       <header className="flex flex-col gap-4 pt-2">
